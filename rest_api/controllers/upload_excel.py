@@ -14,8 +14,8 @@ class FileUploadController(http.Controller):
             # Verificar que el archivo esté presente
             if 'xlsx' not in kwargs:
                 return Response(
-                    json.dumps({"status": "error", "message": "No se proporcionó un archivo Excel"}),
-                    content_type='application/json',
+                    json.dumps({"status": "error", "message": "No se proporcionó un archivo Excel"}), 
+                    content_type='application/json', 
                     status=400
                 )
 
@@ -23,8 +23,8 @@ class FileUploadController(http.Controller):
             file = kwargs['xlsx']
             if not file.filename.endswith(('.xlsx', '.xls')):
                 return Response(
-                    json.dumps({"status": "error", "message": "Formato no válido. Solo se aceptan archivos .xlsx o .xls"}),
-                    content_type='application/json',
+                    json.dumps({"status": "error", "message": "Formato no válido. Solo se aceptan archivos .xlsx o .xls"}), 
+                    content_type='application/json', 
                     status=400
                 )
 
@@ -36,12 +36,25 @@ class FileUploadController(http.Controller):
             created_count = 0
             skipped_count = 0
 
-            # Verificar y crear registros
+            # Mapeo de valores de género
+            gender_mapping = {
+                'M': 'male',
+                'F': 'female'
+            }
+
+            # Verificar y crear registros de estudiantes
             for _, row in excel_data.iterrows():
-                if request.env['res.partner'].sudo().search_count([('name', '=', row['Nombre']), ('email', '=', row['Email'])]) == 0:
-                    request.env['res.partner'].sudo().create({
+                # Mapear género
+                gender = gender_mapping.get(row['Genero'], 'male')  # Valor predeterminado: 'male'
+
+                # Verificar si el estudiante ya existe
+                if request.env['school.student'].sudo().search_count([('name', '=', row['Nombre']), ('email', '=', row['Email'])]) == 0:
+                    request.env['school.student'].sudo().create({
+                        'cuenta': row['Cuenta'],
                         'name': row['Nombre'],
                         'email': row['Email'],
+                        'age': row.get('Edad', 0),
+                        'gender': gender,
                     })
                     created_count += 1
                 else:
@@ -62,7 +75,7 @@ class FileUploadController(http.Controller):
         except Exception as e:
             _logger.error(f"Error al procesar el archivo: {str(e)}", exc_info=True)
             return Response(
-                json.dumps({"status": "error", "message": f"Error procesando el archivo: {str(e)}"}),
-                content_type='application/json',
+                json.dumps({"status": "error", "message": f"Error procesando el archivo: {str(e)}"}), 
+                content_type='application/json', 
                 status=500
             )
