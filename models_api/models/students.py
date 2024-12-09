@@ -31,10 +31,3 @@ class Student(models.Model):
         ('unique_email', 'UNIQUE(email)', 'El correo electrónico debe ser único.'),
     ]
 
-    # Validación Python adicional (opcional)
-    @api.constrains('email')
-    def _check_email_format(self):
-        email_regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
-        for student in self:
-            if not re.match(email_regex, student.email):
-                raise ValidationError('El correo debe tener un formato válido.')
