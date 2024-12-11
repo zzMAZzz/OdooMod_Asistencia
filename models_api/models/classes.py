@@ -6,9 +6,9 @@ class Class(models.Model):
     _description = 'Class Management'
 
     name = fields.Char(string='Class Name', required=True)
-    code = fields.Char(string='Class Code', required=True)  # Puede repetirse
-    section = fields.Char(string='Section', required=True)  # Nueva sección
-    hour = fields.Float(string='Hour', required=True)  # Horario
+    code = fields.Char(string='Class Code', required=True)
+    section = fields.Char(string='Section', required=True)
+    hour = fields.Char('Class Hour', required=True)
     year = fields.Integer(string='Year', required=True, default=lambda self: fields.Date.today().year)
     period = fields.Selection(
         [('1', 'First Semester'), ('2', 'Second Semester'), ('3', 'Third Semester')],
@@ -17,7 +17,6 @@ class Class(models.Model):
     )
     active = fields.Boolean(string='Active', default=True)
 
-    # Relación con docentes
     docent_id = fields.Many2one(
         'school.docent',
         string='Docent',
@@ -25,7 +24,6 @@ class Class(models.Model):
         ondelete='cascade'
     )
 
-    # Relación con estudiantes
     student_ids = fields.Many2many(
         'school.student',
         'class_student_rel',
@@ -49,7 +47,6 @@ class Class(models.Model):
     @api.constrains('student_ids')
     def _check_students(self):
         for record in self:
-            # Verificar que los estudiantes estén activos
             for student in record.student_ids:
                 if not student.active:
                     raise ValidationError(f"El estudiante {student.name} no está activo y no puede ser asignado a la clase.")

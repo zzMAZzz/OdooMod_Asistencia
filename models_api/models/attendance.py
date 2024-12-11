@@ -23,7 +23,7 @@ class Attendance(models.Model):
         [
             ('present', 'Present'),
             ('absent', 'Absent'),
-            ('excused', 'Excused')  # Nuevo estado añadido
+            ('excused', 'Excused') 
         ],
         string='Status',
         required=True,

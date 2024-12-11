@@ -16,7 +16,6 @@ class Student(models.Model):
     )
     active = fields.Boolean(string='Active', default=True)
 
-    # Relación con clases
     class_ids = fields.Many2many(
         'school.class',
         'class_student_rel',

@@ -11,7 +11,6 @@ class Docent(models.Model):
 
     active = fields.Boolean(string='Active', default=True)
 
-    # Relación con clases
     class_ids = fields.One2many(
         'school.class',
         'docent_id',
@@ -21,6 +20,5 @@ class Docent(models.Model):
     @api.constrains('cuenta')
     def _check_unique_cuenta(self):
         for record in self:
-            # Check if there's another record with the same account number
             if self.search_count([('cuenta', '=', record.cuenta)]) > 1:
                 raise ValidationError("The account number must be unique.")
