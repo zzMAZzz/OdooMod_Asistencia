@@ -221,7 +221,8 @@ Todas las respuestas de error tienen el siguiente formato:
    {
      "error": "Faltan campos obligatorios: 'name', 'age', 'grade'."
    }
-   ```### Crear Docente
+   ```
+   ### Crear Docente
 
 **URL:** `/api/docent/create`  
 **Método:** `POST`  
